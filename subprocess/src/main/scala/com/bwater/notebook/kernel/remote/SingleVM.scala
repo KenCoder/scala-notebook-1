@@ -156,7 +156,7 @@ class RemoteProcess(port: String, parentPath: String, cookieFile: String, config
 
   if (log.isTraceEnabled) {
     system.eventStream.subscribe(system.actorOf(Props(new Actor {
-      protected def receive = {
+      def receive = {
         case x => log.trace("Event stream msg: " + x) //Don't use actor logging, messages routed back here...
       }
     })), classOf[AnyRef])

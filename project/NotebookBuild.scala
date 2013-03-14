@@ -19,7 +19,7 @@ object NotebookBuild extends Build {
     organization := "com.bwater",
     version := "0.3.0-SNAPSHOT",
     
-    scalaVersion in ThisBuild := "2.9.1",
+    scalaVersion in ThisBuild := "2.10.0",
 
     fork in Test in ThisBuild := true,
     parallelExecution in Test in ThisBuild := false,
@@ -55,7 +55,8 @@ object NotebookBuild extends Build {
         akkaTestkit,
         slf4jLog4j,
         scalaTest,
-        "org.apache.commons" % "commons-exec" % "1.1"
+        apacheExec,
+        apacheIO
       )
     )
 	
@@ -74,8 +75,8 @@ object NotebookBuild extends Build {
         unfilteredWebsockets,
         unfilteredJson,
         scalaTest,
-        "com.netflix.rxjava" % "rxjava-core" % "0.5.0",
-        "com.netflix.rxjava" % "rxjava-scala" % "0.5.3"
+        rxCore,
+        rxScala
       )
     )
 	
@@ -89,8 +90,8 @@ object NotebookBuild extends Build {
         akka,
         liftJson,
         scalaTest,
-        "log4j" % "log4j" % "1.2.+",
-        "org.scalaz" %% "scalaz-core" % "6.0.4"
+        log4jPlus,
+        scalaZCore
       )
     )
   
@@ -133,28 +134,41 @@ object NotebookBuild extends Build {
         unfilteredJson,
         commonsIO,
         scalaTest,
-        // note: scalate 1.5.3 leaves sbt's run task hanging
-        "org.fusesource.scalate" % "scalate-core" % "1.5.2"
+        scalate
       )
     )
 
   object Dependencies {
+
+    val scalate = "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
+
     val unfilteredVersion = "0.6.5"
     val unfilteredFilter = "net.databinder" %% "unfiltered-filter" % unfilteredVersion
     val unfilteredWebsockets = "net.databinder" %% "unfiltered-netty-websockets" % unfilteredVersion
     val unfilteredJson = "net.databinder" %% "unfiltered-json" % unfilteredVersion
 
-    val akkaVersion = "2.0.2"
-    val akka = "com.typesafe.akka" % "akka-actor" % akkaVersion
-    val akkaRemote = "com.typesafe.akka" % "akka-remote" % akkaVersion
-    val akkaSlf4j = "com.typesafe.akka" % "akka-slf4j" % akkaVersion
-    val akkaTestkit = "com.typesafe.akka" % "akka-testkit" % akkaVersion % "test"
+    val akkaVersion = "2.1.1"
+    val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+    val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaVersion
+    val akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
+    val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
+
+    val rxVersion = "0.5.3"
+    val rxCore = "com.netflix.rxjava" % "rxjava-core" % rxVersion
+    val rxScala = "com.netflix.rxjava" % "rxjava-scala" % rxVersion
+
+    val apacheExec = "org.apache.commons" % "commons-exec" % "1.1"
+    val apacheIO = "org.apache.commons" % "commons-io"   % "1.3.2"
+
+    val scalaZCore = "org.scalaz" %% "scalaz-core" % "6.0.4"
+
 
     val commonsIO = "commons-io" % "commons-io" % "1.4"
+    val log4jPlus = "log4j" % "log4j" % "1.2.+"
     val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.6.4"
-    val liftJson = "net.liftweb" %% "lift-json" % "2.4"
+    val liftJson = "net.liftweb" %% "lift-json" % "2.5-M4"
 
-    val scalaTest = "org.scalatest" %% "scalatest" % "1.8" % "test"
+    val scalaTest = "org.scalatest" %% "scalatest" % "1.9.1" % "test"
   }
 
   
@@ -180,5 +194,4 @@ object NotebookBuild extends Build {
       )
     }
   }
-
 }

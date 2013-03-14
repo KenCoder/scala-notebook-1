@@ -63,7 +63,7 @@ class Repl(compilerOpts: List[String]) {
     // in intellij it has the full module classpath + some intellij stuff.
     settings.usejavacp.value = true
     // println(System.getProperty("java.class.path"))
-    val i = new HackIMain(settings, stdout)
+    val i = new IMain(settings, stdout) // FIXME: Got rid of HackIMain
     i.initializeSynchronous()
     i
   }
@@ -123,7 +123,7 @@ class Repl(compilerOpts: List[String]) {
 
     val result = res match {
       case ReplSuccess =>
-        val request = interp.previousRequests.last
+        val request = interp.prevRequestList.last
         val lastHandler: interp.memberHandlers.MemberHandler = request.handlers.last
 
         try {
@@ -153,7 +153,7 @@ class Repl(compilerOpts: List[String]) {
 
           Success(evalValue)
         } catch {
-          case e =>
+          case e: Throwable =>
             val ex = new StringWriter()
             e.printStackTrace(new PrintWriter(ex))
             Failure(ex.toString)
@@ -168,7 +168,7 @@ class Repl(compilerOpts: List[String]) {
 
   def interrupt(): Unit = {
     // http://stackoverflow.com/questions/8340731/interrupting-repl-iloop-programatically
-    interp.lineManager.cancel()
+    //interp.lineManager.cancel() FIXME
   }
 
   def complete(line: String, cursorPosition: Int): (String, Seq[Match]) = {
