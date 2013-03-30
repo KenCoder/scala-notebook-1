@@ -12,10 +12,11 @@ import akka.testkit.{ImplicitSender, TestKit}
 import kernel.remote.SingleVM
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.scalatest.matchers.MustMatchers
-import akka.util.duration._
-import akka.dispatch.{Future, Await}
-import akka.util.{Duration, Timeout}
+import scala.concurrent.duration._
+import scala.concurrent.{Future,Await}
+
 import com.typesafe.config.ConfigFactory
+import akka.util.Timeout
 
 class RemoteActor(state: Int) extends Actor {
   def receive = {
@@ -38,7 +39,10 @@ class SingleVMTests extends TestKit(ActorSystem("SingleVMTests", ConfigFactory.l
   "Child process actors" must {
 
     import akka.pattern.ask
-    implicit val timeout: Timeout = 5 seconds
+    import scala.concurrent.duration._
+    import system.dispatcher
+
+    implicit val timeout = Timeout(5 seconds)
     
     def spawn(vm: ActorRef, creator: => Actor): Future[ActorRef] = (vm ? Spawn(Props(creator))) map { _.asInstanceOf[ActorRef] }
 

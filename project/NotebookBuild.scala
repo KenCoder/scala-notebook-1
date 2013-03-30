@@ -134,7 +134,8 @@ object NotebookBuild extends Build {
         unfilteredJson,
         commonsIO,
         scalaTest,
-        scalate
+        scalate,
+        apacheHttpClient
       )
     )
 
@@ -158,10 +159,10 @@ object NotebookBuild extends Build {
     val rxScala = "com.netflix.rxjava" % "rxjava-scala" % rxVersion
 
     val apacheExec = "org.apache.commons" % "commons-exec" % "1.1"
+    val apacheHttpClient = "org.apache.httpcomponents" % "httpclient" % "4.2.3"
     val apacheIO = "org.apache.commons" % "commons-io"   % "1.3.2"
 
     val scalaZCore = "org.scalaz" %% "scalaz-core" % "6.0.4"
-
 
     val commonsIO = "commons-io" % "commons-io" % "1.4"
     val log4jPlus = "log4j" % "log4j" % "1.2.+"
