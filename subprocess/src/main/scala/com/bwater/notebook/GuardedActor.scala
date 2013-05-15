@@ -69,7 +69,11 @@ abstract class GuardedActor extends Actor with Stash {
   }
 
   def getType[A : Manifest]: Guard[A] = new Guard[A] {
-    protected[GuardedActor] def >>:(msg: Any) = if (manifest[A].erasure.isInstance(msg)) Complete(msg.asInstanceOf[A]) else Pass
+    protected[GuardedActor] def >>:(msg: Any) = {
+      if (manifest[A].runtimeClass.isInstance(msg)) {
+        Complete(msg.asInstanceOf[A])
+      } else Pass
+    }
   }
 
   private[this] def receiveGuarded(guard: Guard[Unit]): Receive = {

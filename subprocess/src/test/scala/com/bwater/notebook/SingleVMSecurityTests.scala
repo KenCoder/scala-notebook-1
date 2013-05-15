@@ -14,9 +14,10 @@ import org.scalatest.matchers.MustMatchers
 import org.scalatest.BeforeAndAfterAll
 import akka.testkit.ImplicitSender
 import akka.actor._
-import akka.util.duration._
+import scala.concurrent.duration._
+import scala.concurrent.{Future,Await}
 import com.typesafe.config.ConfigFactory
-import akka.dispatch.{Await, Future}
+
 import akka.pattern.ask
 import akka.util.Timeout
 
@@ -31,6 +32,7 @@ class SingleVMSecurityTests(_system: ActorSystem) extends TestKit(_system) with 
 
   "A remote actor" must {
 
+    import _system.dispatcher
     implicit val timeout: Timeout = 5 seconds
     def spawn(vm: ActorRef, creator: => Actor): Future[ActorRef] = (vm ? Spawn(Props(creator))) map { _.asInstanceOf[ActorRef] }
 

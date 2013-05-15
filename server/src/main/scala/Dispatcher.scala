@@ -334,7 +334,7 @@ trait NotebookSession extends Logging {
 
   ifDebugEnabled {
     system.eventStream.subscribe(system.actorOf(Props(new Actor {
-      protected def receive = {
+      def receive = {
         case x => logDebug("Actor Lifecycle event: " + x)
       }
     })), classOf[RemoteClientLifeCycleEvent])

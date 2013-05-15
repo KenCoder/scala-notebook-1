@@ -7,7 +7,7 @@
 
 package com.bwater.notebook.kernel.pfork
 
-import concurrent.ops
+import concurrent.{ExecutionContext, ops, Future}
 import collection.mutable
 import collection.JavaConversions._
 import org.apache.commons.exec._
@@ -17,13 +17,14 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.Option
 
+
 /**
  * I am so sick of this being a thing that gets implemented everywhere. Let's abstract.
  */
 class ProcessFork[A: Manifest] {
   import ProcessFork._
 
-  val processClass = manifest[A].erasure
+  val processClass = manifest[A].runtimeClass
   assert(processClass.getConstructors exists { c =>
     val types = c.getParameterTypes
     singleSeqParameter(types) || allStringParameters(types)
@@ -121,7 +122,10 @@ object ProcessFork {
   /* DK: Bi-directional liveness can be detected via redirected System.in (child), System.out (parent), avoids need for socket... */
   private lazy val serverPort = {
     val ss = new ServerSocket(0)
-    ops.spawn {
+
+    import ExecutionContext.Implicits.global
+
+    Future {
       try {
         // CY: Not super rigorous, but we think that, if we don't hang onto a reference to the Socket server-side,
         // eventually it'll get GC'ed, which causes the child VM to die.
@@ -132,7 +136,7 @@ object ProcessFork {
           conns += conn //TODO: mem/resource leak...
         }
       } catch {
-        case e => e.printStackTrace()
+        case e: Throwable => e.printStackTrace()
       }
     }
     ss.getLocalPort
