@@ -8,7 +8,7 @@ import com.bwater.notebook.util.Logging
 import org.apache.log4j.PropertyConfigurator
 import server._
 import java.io.{ IOException, File, Reader }
-import java.net.InetAddress
+import java.net.{ InetAddress, URLEncoder }
 import com.typesafe.config.Config
 import java.io.BufferedReader
 import com.typesafe.config.ConfigFactory
@@ -73,8 +73,17 @@ object Server extends Logging {
     val port = choosePort(host)
     val security = if (secure) new ClientAuth(host, port) else Insecure
 
+    val NotebookArg = "--notebook=(\\S+)".r
+    val notebook = args.collect {
+      case NotebookArg(name) => name
+    }.headOption
+    val queryString =
+      for (name <- notebook)
+      yield "?dest=" + URLEncoder.encode("/view/" + name, "UTF-8")
+
     startServer(config, host, port, security) {
-      (http, app) => startAction("http://%s:%d/%s".format(host, port, security.loginPath))
+      val baseUrl = "http://%s:%d/%s".format(host, port, security.loginPath)
+      (http, app) => startAction((baseUrl ++ queryString).mkString)
     }
   }
 
@@ -99,7 +108,7 @@ object Server extends Logging {
     val kernelPlan = unfiltered.netty.async.Planify(withCSRFKeyAsync(app.WebServer.kernelIntent))
     val loggerPlan = unfiltered.netty.cycle.Planify(new ReqLogger().intent)
 
-    val obsInt = unfiltered.netty.websockets.Planify(withWSAuth(new ObservableIntent(app.vmManager, app.system).webSocketIntent)).onPass(_.sendUpstream(_))
+    val obsInt = unfiltered.netty.websockets.Planify(withWSAuth(new ObservableIntent(app.system).webSocketIntent)).onPass(_.sendUpstream(_))
 
     val iPythonRes = Resources(getClass.getResource("/from_ipython/"), 3600, true)
     val thirdPartyRes = Resources(getClass.getResource("/thirdparty/"), 3600, true)
@@ -144,6 +153,7 @@ object Server extends Logging {
       }, {
         svr =>
           logInfo("shutting down server")
+          KernelManager.shutdown()
           app.system.shutdown()
       })
   }
