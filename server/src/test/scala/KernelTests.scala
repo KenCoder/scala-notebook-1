@@ -1,5 +1,5 @@
 import akka.actor.ActorSystem
-import akka.dispatch.{Future, Promise, Await}
+import scala.concurrent.{Future, Promise, Await}
 import akka.pattern.AskSupport
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
@@ -12,18 +12,18 @@ import com.typesafe.config.ConfigFactory
 import java.util.concurrent.{LinkedBlockingQueue, ArrayBlockingQueue, BlockingQueue}
 import net.liftweb.json.JsonAST.JInt
 import net.liftweb.json.JsonAST.{JValue, JInt}
-import org.scalamock.ProxyMockFactory
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
-import akka.util.duration._
+import scala.concurrent.duration._
 import net.liftweb.json._
 import JsonDSL._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Author: Ken
  */
-class KernelTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpec with MustMatchers with BeforeAndAfterAll with MockFactory with ProxyMockFactory with AskSupport {
+class KernelTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpec with MustMatchers with BeforeAndAfterAll with MockFactory with AskSupport {
 
   def this() = this(ActorSystem("MySpec", AkkaConfigUtils.requireCookie(ConfigFactory.load("subprocess-test"), "Cookie")))
 

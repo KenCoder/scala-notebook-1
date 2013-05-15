@@ -14,6 +14,7 @@ import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.scalatest.matchers.MustMatchers
 import scala.concurrent.duration._
 import scala.concurrent.{Future,Await}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.typesafe.config.ConfigFactory
 import akka.util.Timeout
@@ -35,16 +36,7 @@ class SingleVMTests extends TestKit(ActorSystem("SingleVMTests", ConfigFactory.l
   }
 
   "Child process actors" must {
-<<<<<<< HEAD
-
-    import akka.pattern.ask
-    import scala.concurrent.duration._
-    import system.dispatcher
-
-    implicit val timeout = Timeout(5 seconds)
-=======
     implicit val timeout: Timeout = 5 seconds
->>>>>>> 92d64825d20c18a3f6716386ff27035a5a5376fa
     
     def retryUntilReceive(tries: Int, every: Duration)(action: => Unit): Option[Any] = {
       for (_ <- 0 until tries) {

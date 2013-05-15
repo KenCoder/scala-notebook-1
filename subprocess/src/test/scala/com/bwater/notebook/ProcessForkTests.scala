@@ -7,8 +7,8 @@ import kernel.pfork.{BetterFork, ForkableProcess, ProcessFork}
 import kernel.remote.{RemoteActorSystem,  AkkaConfigUtils}
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.scalatest.matchers.MustMatchers
-import akka.dispatch.{Await, Future, Promise}
-import akka.util.duration._
+import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.duration._
 import java.lang.Exception
 import scala.Exception
 import org.apache.commons.exec.ExecuteException
@@ -52,7 +52,7 @@ class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with Impli
       val remote = Await.result(RemoteActorSystem.spawn(_system, "subprocess-test"), 5 seconds)
 
       val actor = remote.actorOf(_system, Props(new Actor{
-        protected def receive = {
+        def receive = {
           case 1 => sender ! 2
         }
       }))

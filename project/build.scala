@@ -170,7 +170,7 @@ object NotebookBuild extends Build {
     val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.6.4"
 
     val scalaTest = "org.scalatest" %% "scalatest" % "1.9.1" % "test"
-    val scalaMock = "org.scalamock" %% "scalamock-scalatest-support" % "2.4" % "test"
+    val scalaMock = "org.scalamock" %% "scalamock-scalatest-support" % "3.0.1" % "test"
   }
 
   
