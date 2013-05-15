@@ -9,7 +9,7 @@ package com.bwater.notebook
 
 import akka.actor._
 import akka.testkit.{ImplicitSender, TestKit}
-import kernel.remote.SingleVM
+import kernel.remote.{RemoteActorSystem, SingleVM}
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.scalatest.matchers.MustMatchers
 import scala.concurrent.duration._
@@ -30,22 +30,22 @@ class RemoteActor(state: Int) extends Actor {
 
 class SingleVMTests extends TestKit(ActorSystem("SingleVMTests", ConfigFactory.load("subprocess-test"))) with ImplicitSender with WordSpec with MustMatchers with BeforeAndAfterAll {
   
-  import SingleVM._
-
   override def afterAll() {
     system.shutdown()
   }
 
   "Child process actors" must {
+<<<<<<< HEAD
 
     import akka.pattern.ask
     import scala.concurrent.duration._
     import system.dispatcher
 
     implicit val timeout = Timeout(5 seconds)
+=======
+    implicit val timeout: Timeout = 5 seconds
+>>>>>>> 92d64825d20c18a3f6716386ff27035a5a5376fa
     
-    def spawn(vm: ActorRef, creator: => Actor): Future[ActorRef] = (vm ? Spawn(Props(creator))) map { _.asInstanceOf[ActorRef] }
-
     def retryUntilReceive(tries: Int, every: Duration)(action: => Unit): Option[Any] = {
       for (_ <- 0 until tries) {
         action
@@ -55,50 +55,72 @@ class SingleVMTests extends TestKit(ActorSystem("SingleVMTests", ConfigFactory.l
       None
     }
 
-    "restart after an actor death" in {
-      val vm = system.actorOf(Props[SingleVM])
+    "support simple actor and shutdown remote process" in {
+      val remote = Await.result(RemoteActorSystem.spawn(system, "kernel.conf"), 10 seconds)
+      val tester = remote.actorOf(system, Props(new RemoteActor(5)))
 
-      val remote = Await.result(spawn(vm, new RemoteActor(5)), 5 seconds)
-
-      remote ! 10
+      tester ! 10
 
       assert(receiveOne(1 second) === 50)
 
-      remote ! -1
-
-      assert(retryUntilReceive(2, 1 second) {
-        remote ! 5
-      } === Some(25))
-
-      system.stop(vm)
+      remote.shutdownRemote()
     }
 
-    "restart after a process termination" in {
-      val vm = system.actorOf(Props[SingleVM])
+    "support actor restarts" ignore {
+      val remote = Await.result(RemoteActorSystem.spawn(system, "kernel.conf"), 10 seconds)
+      val tester = remote.actorOf(system, Props(new RemoteActor(5)))
 
-      val remote = Await.result(spawn(vm, new RemoteActor(5)), 5 seconds)
-
-      remote ! 10
+      tester ! 10
 
       assert(receiveOne(1 second) === 50)
 
-      remote ! 0
+      tester ! -1
 
-      assert(retryUntilReceive(5, 1 second) {
-        remote ! 5
+      assert(retryUntilReceive(2, 1 second) {
+        tester ! 5
       } === Some(25))
 
-      system.stop(vm)
+      remote.shutdownRemote()
+    }
+
+    // TODO: Write a test where we detect the death and restart manually
+    "restart after a process termination" ignore {
+      val remote = Await.result(RemoteActorSystem.spawn(system, "kernel.conf"), 10 seconds)
+      val tester = remote.actorOf(system, Props(new RemoteActor(5)))
+
+      tester ! 10
+
+      watch(tester)
+
+      assert(receiveOne(1 second) === 50)
+
+      tester ! 0
+
+      assert(receiveOne(1 second) === 50)
+
+
+      assert(retryUntilReceive(5, 1 second) {
+        tester ! 5
+      } === Some(25))
+
+      remote.shutdownRemote()
     }
 
     "not affect each other" ignore { //Does not work in CI
-      val vms = for (i <- 0 to 3) yield system.actorOf(Props[SingleVM])
-      val remotes = Await.result(Future.sequence(vms.zipWithIndex flatMap { case (vm, i) => Seq(spawn(vm, new RemoteActor(5 + i)), spawn(vm, new RemoteActor(10 + i))) }), 5 seconds)
+      val vms = for {
+        i <- 0 to 3
+      } yield RemoteActorSystem.spawn(system, "kernel.conf")
+
+      val vmNow =  Await.result(Future.sequence(vms), 20 seconds)
+      val remotes = for {
+        (vm, i) <- vmNow.zipWithIndex
+        remote <- Seq(vm.actorOf(system, Props( new RemoteActor(5 + i))), vm.actorOf(system, Props( new RemoteActor(5 + i))))
+      } yield remote
+
 
       for (remote <- remotes) {
         remote ! 10
       }
-
       assert(receiveN(8).toSet === Set(50, 60, 70, 80, 100, 110, 120, 130))
 
       remotes.head ! -1
@@ -113,7 +135,7 @@ class SingleVMTests extends TestKit(ActorSystem("SingleVMTests", ConfigFactory.l
         remotes.head ! 5
       } === Some(25))
 
-      vms.foreach(system.stop)
+      vmNow.foreach(_.shutdownRemote())
     }
   }
 }
