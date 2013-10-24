@@ -41,9 +41,9 @@ object Renderer extends LowPriorityRenderers {
 }
 
 trait LowPriorityRenderers {
-  implicit object seqAsColumn extends Renderer[Seq[_]] {
-    def render(x: Seq[_]) = {
-      val values = if (x.lengthCompare(25) < 0) x.map(_.toString) else x.take(24).map(_.toString) :+ "..."
+  implicit object seqAsColumn extends Renderer[Seq[Any]] {
+    def render(x: Seq[Any]) = {
+      val values = if (x.lengthCompare(25) < 0) x.map( _.toString) else x.take(24).map( _.toString) :+ "..."
       widgets.column(values.map(widgets.text(_)):_*)
     }
   }

@@ -14,9 +14,10 @@ import org.scalatest.matchers.MustMatchers
 import org.scalatest.BeforeAndAfterAll
 import akka.testkit.ImplicitSender
 import akka.actor._
-import akka.util.duration._
+import scala.concurrent.duration._
+import scala.concurrent.{Future,Await}
 import com.typesafe.config.ConfigFactory
-import akka.dispatch.{Await, Future}
+
 import akka.pattern.ask
 import akka.util.Timeout
 
@@ -31,7 +32,6 @@ class SingleVMSecurityTests(_system: ActorSystem) extends TestKit(_system) with 
 
 
   "A remote actor" must {
-
     implicit val timeout: Timeout = 10 seconds
 
     "inherit secure cookie" in {

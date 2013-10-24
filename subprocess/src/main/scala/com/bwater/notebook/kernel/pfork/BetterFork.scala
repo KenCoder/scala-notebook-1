@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.Option
 import com.sun.org.apache.xpath.internal.functions.FuncTrue
-import akka.dispatch.{Promise, ExecutionContext, Await, Future}
-import akka.util.Duration
+import scala.concurrent.{Promise, ExecutionContext, Await, Future}
+import scala.concurrent.duration._
 import collection.mutable.ListBuffer
 import java.util.concurrent.Executors
 import org.apache.log4j.PropertyConfigurator
@@ -42,7 +42,7 @@ class BetterFork[A <: ForkableProcess : Manifest](executionContext: ExecutionCon
 
   import BetterFork._
 
-  val processClass = manifest[A].erasure
+  val processClass = manifest[A].runtimeClass
 
   def workingDirectory = new File(".")
   def heap: Long = defaultHeap

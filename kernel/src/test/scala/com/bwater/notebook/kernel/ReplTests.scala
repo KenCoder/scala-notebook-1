@@ -4,7 +4,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite}
 import com.bwater.notebook.Match
 import xml.Text
 import org.scalatest.matchers.ShouldMatchers
-import concurrent.ops
+import concurrent.{Future, ExecutionContext, ops}
 import java.util.concurrent.{TimeUnit, CountDownLatch}
 
 class ReplTests extends FunSuite with BeforeAndAfter with ShouldMatchers {
@@ -49,12 +49,7 @@ class ReplTests extends FunSuite with BeforeAndAfter with ShouldMatchers {
 
     stackTrace should startWith(
       """java.lang.RuntimeException: Error
-        |	at scala.sys.package$.error(package.scala:27)
-        |	at .<init>(<console>:8)
-        |	at .<clinit>(<console>)
-        |	at .<init>(<console>:11)
-        |	at .<clinit>(<console>)
-        |	at $print(<console>)""".stripMargin)
+        |	at scala.sys.package$.error""".stripMargin)
   }
 
   test("evaluation should capture printlns") {
@@ -75,7 +70,9 @@ class ReplTests extends FunSuite with BeforeAndAfter with ShouldMatchers {
     val start = new CountDownLatch(1)
     val complete = new CountDownLatch(1)
 
-    ops.spawn {
+    import ExecutionContext.Implicits.global
+
+    Future {
       start.countDown()
 
       repl.evaluate(

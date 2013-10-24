@@ -12,10 +12,12 @@ import akka.testkit.{ImplicitSender, TestKit}
 import kernel.remote.{RemoteActorSystem, SingleVM}
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import org.scalatest.matchers.MustMatchers
-import akka.util.duration._
-import akka.dispatch.{Future, Await}
-import akka.util.{Duration, Timeout}
+import scala.concurrent.duration._
+import scala.concurrent.{Future,Await}
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import com.typesafe.config.ConfigFactory
+import akka.util.Timeout
 
 class RemoteActor(state: Int) extends Actor {
   def receive = {
