@@ -15,6 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import java.io.File
 import org.apache.commons.io.FileUtils
 import java.util.concurrent.atomic.AtomicInteger
+import akka.event.Logging
 
 
 /**
@@ -75,7 +76,7 @@ class RemoteActorSystem(localSystem: ActorSystem, info: ProcessInfo, remoteConte
 
   val address = AddressFromURIString(info.initReturn)
 
-  val shutdownActor = remoteContext.actorOf(Props(new ShutdownActor).withDeploy(Deploy(scope = RemoteScope(address))))
+  val shutdownActor = remoteContext.actorOf(Props[ShutdownActor].withDeploy(Deploy(scope = RemoteScope(address))))
 
   def deploy = Deploy(scope = RemoteScope(address))
 

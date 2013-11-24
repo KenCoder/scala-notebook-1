@@ -29,6 +29,12 @@ class CrasherProcess extends ForkableProcess {
   def waitForExit() { Thread.sleep(200) }
 }
 
+class SimpleTestActor extends Actor {
+  def receive = {
+    case 1 => sender ! 2
+  }
+}
+
 class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpecLike with ShouldMatchers with BeforeAndAfterAll with AskSupport {
   implicit val timeout:Timeout = 10 seconds
   def this() = this(ActorSystem("MySpec", AkkaConfigUtils.requireCookie(ConfigFactory.load("subprocess-test"), "Cookie")))
@@ -51,11 +57,7 @@ class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with Impli
     "Create a simple actor" in {
       val remote = Await.result(RemoteActorSystem.spawn(_system, "subprocess-test"), 5 seconds)
 
-      val actor = remote.actorOf(_system, Props(new Actor{
-        def receive = {
-          case 1 => sender ! 2
-        }
-      }))
+      val actor = remote.actorOf(_system, Props[SimpleTestActor])
 
       Await.result((actor ? 1).mapTo[Int], 5 seconds) should equal(2)
       remote.shutdownRemote()
