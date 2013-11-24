@@ -34,7 +34,7 @@ object Scalate {
         case e if engine.isDevelopmentMode =>
           printWriter.println("Exception: " + e.getMessage)
           e.getStackTrace.foreach(printWriter.println)
-        case e => throw e
+        case e:Throwable => throw e
       }
     }
   }

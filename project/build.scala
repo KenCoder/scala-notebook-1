@@ -145,31 +145,31 @@ object NotebookBuild extends Build {
 
     val scalate = "org.fusesource.scalate" %% "scalate-core" % "1.6.1"
 
-    val unfilteredVersion = "0.6.5"
+    val unfilteredVersion = "0.7.1"
     val unfilteredFilter = "net.databinder" %% "unfiltered-filter" % unfilteredVersion
     val unfilteredWebsockets = "net.databinder" %% "unfiltered-netty-websockets" % unfilteredVersion
-    val unfilteredJson = "net.databinder" %% "unfiltered-json" % unfilteredVersion
+    val unfilteredJson = "net.databinder" %% "unfiltered-json4s" % unfilteredVersion
 
-    val akkaVersion = "2.1.1"
+    val akkaVersion = "2.2.3"
     val akka = "com.typesafe.akka" %% "akka-actor" % akkaVersion
     val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaVersion
     val akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
     val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
 
-    val rxVersion = "0.5.3"
+    val rxVersion = "0.14.8"
     val rxCore = "com.netflix.rxjava" % "rxjava-core" % rxVersion
     val rxScala = "com.netflix.rxjava" % "rxjava-scala" % rxVersion
 
     val apacheExec = "org.apache.commons" % "commons-exec" % "1.1"
-    val apacheHttpClient = "org.apache.httpcomponents" % "httpclient" % "4.2.3"
+    val apacheHttpClient = "org.apache.httpcomponents" % "httpclient" % "4.3.1"
 
     val scalaZCore = "org.scalaz" %% "scalaz-core" % "7.0.0"
         
     val commonsIO = "commons-io" % "commons-io" % "1.4"
     val log4jPlus = "log4j" % "log4j" % "1.2.+"
-    val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.6.4"
+    val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.5"
 
-    val scalaTest = "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+    val scalaTest = "org.scalatest" %% "scalatest" % "1.9.2" % "test"
     val scalaMock = "org.scalamock" %% "scalamock-scalatest-support" % "3.0.1" % "test"
   }
 

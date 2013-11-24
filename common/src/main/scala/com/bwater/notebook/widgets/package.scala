@@ -7,16 +7,15 @@
 
 package com.bwater.notebook
 
-import net.liftweb.json.JsonAST.{JString, JValue, JObject, render}
-import net.liftweb.json.JsonDSL._
-import net.liftweb.json.Printer.compact
 import xml.{NodeSeq, UnprefixedAttribute, Null}
-import net.liftweb.json.DefaultFormats
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
+import org.json4s.native.JsonMethods
 
 /**
  * This package contains primitive widgets that can be used in the child environment.
  */
-package object widgets {
+package object widgets extends JsonMethods {
   def scopedScript(content: String, data: JObject = null) = {
     val tag = <script type="text/x-scoped-javascript">/*{xml.PCData("*/" + content + "/*")}*/</script>
     if (data == null)
@@ -57,6 +56,4 @@ package object widgets {
 
   def row(contents: Widget*) = layout(contents.length, contents)
   def column(contents: Widget*) = layout(1, contents)
-
-  def multi(widgets: Widget*) = html(NodeSeq.fromSeq(widgets.map(_.toHtml).flatten))
 }

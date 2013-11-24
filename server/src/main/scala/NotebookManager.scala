@@ -1,14 +1,14 @@
 package com.bwater.notebook
 package server
 
-import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
 import java.io._
 import org.apache.commons.io.FileUtils
 import java.util.{Date, UUID}
 import java.text.SimpleDateFormat
 import com.bwater.notebook.NBSerializer.{Metadata, Worksheet, Notebook}
 import java.net.{URLEncoder, URLDecoder}
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 
 /**
  * Author: Ken

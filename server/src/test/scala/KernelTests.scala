@@ -10,14 +10,12 @@ import com.bwater.notebook.kernel.remote.AkkaConfigUtils
 import com.bwater.notebook.server.{CalcWebSocketService, SessionRequest, WebSockWrapper}
 import com.typesafe.config.ConfigFactory
 import java.util.concurrent.{LinkedBlockingQueue, ArrayBlockingQueue, BlockingQueue}
-import net.liftweb.json.JsonAST.JInt
-import net.liftweb.json.JsonAST.{JValue, JInt}
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.{BeforeAndAfterAll, WordSpec}
 import scala.concurrent.duration._
-import net.liftweb.json._
-import JsonDSL._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**

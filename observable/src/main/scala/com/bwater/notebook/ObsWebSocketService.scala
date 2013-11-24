@@ -5,12 +5,13 @@ import akka.actor._
 import scala.concurrent.duration._
 import unfiltered.netty.websockets.WebSocket
 import akka.actor.Deploy
-import net.liftweb.json._, JsonDSL._
+import org.json4s.JsonDSL._
+import org.json4s.native._
 
 /**
  * Author: Ken
  */
-class ObsWebSocketService(system: ActorSystem, val webSock: WebSocket, remoteDeployFuture: Future[Deploy]) {
+class ObsWebSocketService(system: ActorSystem, val webSock: WebSocket, remoteDeployFuture: Future[Deploy]) extends JsonMethods {
 
   val obsActor = system.actorOf(Props(new LocalActor))
 

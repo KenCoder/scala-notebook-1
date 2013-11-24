@@ -7,9 +7,9 @@
 
 package com.bwater.notebook
 
-import net.liftweb.json.DefaultFormats
-import net.liftweb.json.JsonAST._
 import org.slf4j.LoggerFactory
+import org.json4s.DefaultFormats
+import org.json4s.JsonAST._
 
 /**
  * Author: Ken

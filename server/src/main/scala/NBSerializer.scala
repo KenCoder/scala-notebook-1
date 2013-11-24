@@ -1,8 +1,10 @@
 package com.bwater.notebook
 
-import net.liftweb.json._
-import net.liftweb.json.Serialization
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 import java.util.{Date}
+import org.json4s.{Extraction, TypeHints}
+import org.json4s.native.{JsonMethods, Serialization}
 
 /**
  * Author: Ken
@@ -10,7 +12,7 @@ import java.util.{Date}
  */
 
 
-object NBSerializer {
+object NBSerializer extends JsonMethods {
   trait Output
   case class ScalaOutput(prompt_number: Int, html: Option[String], text: Option[String]) extends Output
   case class ScalaError(prompt_number: Int, traceback: String) extends Output
@@ -50,7 +52,7 @@ object NBSerializer {
   def write(nb: Notebook): String = {
     val json = Extraction.decompose(nb)
 
-    val mapped = json transform {
+    val mapped = json transformField {
       case JField("jsonClass", JString(x)) =>
         val (typ, cat, _) =
           (translations filter { _._3 == x }).head
@@ -61,7 +63,7 @@ object NBSerializer {
 
   def read(s: String): Notebook = {
     val json = parse(s)
-    val mapped = json transform {
+    val mapped = json transformField {
       case JField(typ, JString(cat)) if (translations exists { x => x._1 == typ && x._2 == cat }) =>
         val (_, _, clazz) = (translations filter { x => x._1 == typ && x._2 == cat }).head
         JField("jsonClass", JString(clazz))

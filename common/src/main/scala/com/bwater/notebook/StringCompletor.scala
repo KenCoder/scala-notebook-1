@@ -7,7 +7,8 @@
 
 package com.bwater.notebook
 
-import net.liftweb.json.JsonAST.{JString, JField, JObject}
+import org.json4s.JsonAST._
+
 
 /**
  * Pluggable interface for completing Strings.

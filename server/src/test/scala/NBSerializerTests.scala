@@ -2,8 +2,6 @@ import com.bwater.notebook.NBSerializer
 import com.bwater.notebook.NBSerializer._
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.FlatSpec
-import net.liftweb.json._
-import net.liftweb.json.Serialization
 
 /**
  * Author: Ken

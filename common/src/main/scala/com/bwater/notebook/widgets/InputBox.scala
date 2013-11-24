@@ -7,8 +7,7 @@
 
 package com.bwater.notebook.widgets
 
-import net.liftweb.json.JsonDSL._
-import net.liftweb.json.JsonAST.{JString, JValue}
+import org.json4s.JsonDSL._
 import com.bwater.notebook._
 
 

@@ -7,7 +7,7 @@
 
 package com.bwater.notebook
 
-import net.liftweb.json._
+import org.json4s.JsonAST.JValue
 
 trait ObservableMessage
 case class ObservableBrowserToVM(id: String, newValue: JValue) extends ObservableMessage

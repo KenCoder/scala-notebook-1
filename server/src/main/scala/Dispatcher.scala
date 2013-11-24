@@ -1,31 +1,42 @@
 package com.bwater.notebook
 package server
 
-import unfiltered.Cookie
-import unfiltered.netty.websockets.{Pass => _, _}
+import unfiltered.netty.websockets.{Pass => _}
 import unfiltered.request._
-import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
 import akka.actor._
-import akka.remote.RemoteClientLifeCycleEvent
 import java.net.URLDecoder
-import java.io.File
 import java.util.UUID
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 import com.typesafe.config.ConfigFactory
-import client._
-import kernel.remote.{Subprocess, AkkaConfigUtils, VMManager}
+import kernel.remote.AkkaConfigUtils
 import com.bwater.notebook.util.Logging
 import unfiltered.netty.RequestBinding
 import unfiltered.response._
 import unfiltered.request.Accepts.Accepting
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.JavaConverters._
+import org.json4s.native.JsonMethods
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
+import unfiltered.netty.websockets.Close
+import unfiltered.response.Redirect
+import unfiltered.netty.websockets.Message
+import scala.Some
+import unfiltered.response.CharContentType
+import unfiltered.response.ResponseHeader
+import unfiltered.netty.websockets.Text
+import org.json4s.JsonAST.JString
+import unfiltered.Cookie
+import unfiltered.response.ResponseString
+import com.bwater.notebook.client.ObjectInfoRequest
+import com.bwater.notebook.client.CompletionRequest
+import unfiltered.netty.websockets.Open
+import com.bwater.notebook.client.ExecuteRequest
+import unfiltered.netty.websockets.Error
+import org.json4s.JsonAST.JInt
 
 /** unfiltered plan */
 class Dispatcher(protected val config: ScalaNotebookConfig,
                  domain: String,
-                 port: Int) extends NotebookSession {
+                 port: Int) extends NotebookSession with JsonMethods {
   
   val executionCounter = new AtomicInteger(0)
 
@@ -57,13 +68,13 @@ class Dispatcher(protected val config: ScalaNotebookConfig,
 
             logDebug("Message for " + kernelId + ":" + msg)
 
-            val json = parse(msg)
+            val JObject(json) = parse(msg)
 
             for {
-              JField("header", header) <- json
+              JField("header", JObject(header)) <- json
               JField("session", session) <- header
               JField("msg_type", msgType) <- header
-              JField("content", content) <- json
+              JField("content", JObject(content)) <- json
             } {
               msgType match {
                 case JString("execute_request") => {
@@ -161,7 +172,7 @@ class Dispatcher(protected val config: ScalaNotebookConfig,
           "project" -> nbm.name)
 
       case GET(Path(Seg("notebooks" :: Nil))) =>
-        Json(nbm.listNotebooks)
+        new ComposeResponse(JsonContent ~> ResponseString(compact(render(nbm.listNotebooks))))
 
       case GET(Path(Seg("clusters" :: Nil))) =>
         val s = """[{"profile":"default","status":"stopped","profile_dir":"C:\\Users\\Ken\\.ipython\\profile_default"}]"""
@@ -338,12 +349,13 @@ trait NotebookSession extends Logging {
   val system = ActorSystem("NotebookServer", AkkaConfigUtils.optSecureCookie(ConfigFactory.load("notebook-server"), akka.util.Crypt.generateSecureCookie))
   logInfo("Notebook session initialized")
 
-  ifDebugEnabled {
-    system.eventStream.subscribe(system.actorOf(Props(new Actor {
-      def receive = {
-        case x => logDebug("Actor Lifecycle event: " + x)
-      }
-    })), classOf[RemoteClientLifeCycleEvent])
-  }
+  // TODO :Figure out debuggin in latest akka
+//  ifDebugEnabled {
+//    system.eventStream.subscribe(system.actorOf(Props(new Actor {
+//      def receive = {
+//        case x => logDebug("Actor Lifecycle event: " + x)
+//      }
+//    })), classOf[RemoteClientLifeCycleEvent])
+//  }
 
 }

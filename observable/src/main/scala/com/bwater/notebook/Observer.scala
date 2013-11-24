@@ -21,7 +21,7 @@ trait Observer[T] extends rx.Observer[T] {
 trait ConcreteObserver[T] extends Observer[T] {
   def onCompleted() {}
 
-  def onError(e: Exception) {}
+  def onError(e: Throwable) {}
 
   def onNext(args: T) {}
 }
@@ -35,7 +35,7 @@ trait MappingObserver[A,B] extends Observer[B] {
 
   def onCompleted() {innerObserver.onCompleted()}
 
-  def onError(e: Exception) {innerObserver.onError(e)}
+  def onError(e: Throwable) {innerObserver.onError(e)}
 
   def onNext(args: B) {innerObserver.onNext(observerMapper(args))}
 }

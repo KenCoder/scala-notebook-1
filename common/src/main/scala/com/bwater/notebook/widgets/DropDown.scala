@@ -9,10 +9,10 @@ package com.bwater.notebook
 package widgets
 
 import com.bwater.notebook.Widget
-import net.liftweb.json.JsonAST.{JValue, JArray, JInt}
-import net.liftweb.json.JsonDSL._
-import net.liftweb.json.DefaultFormats
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 import rx.Observable
+import org.json4s.DefaultFormats
 
 class DropDown[A](options: Seq[A], toString: A=>String = (a:A)=>a.toString) extends Widget  {
 

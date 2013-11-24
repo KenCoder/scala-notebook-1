@@ -2,16 +2,17 @@ package com.bwater.notebook
 package server
 
 import unfiltered.netty.websockets.WebSocket
-import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
 import java.util.UUID
 import com.bwater.notebook.util.Logging
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
+import org.json4s.native.JsonMethods
 
 /**
  * Author: Ken
  */
 
-trait WebSockWrapper {
+trait WebSockWrapper extends JsonMethods {
   def send(header: JValue, session: JValue, msgType: String, content: JValue)
 }
 

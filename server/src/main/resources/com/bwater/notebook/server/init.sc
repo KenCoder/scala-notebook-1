@@ -6,6 +6,6 @@
  */
 
 import com.bwater.notebook._, widgets._
-import net.liftweb.json.JsonAST.JArray
-import net.liftweb.json.JsonDSL._
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 

@@ -5,8 +5,8 @@ import akka.actor.{Actor, Props, ActorSystem}
 import com.typesafe.config.ConfigFactory
 import kernel.pfork.{BetterFork, ForkableProcess, ProcessFork}
 import kernel.remote.{RemoteActorSystem,  AkkaConfigUtils}
-import org.scalatest.{BeforeAndAfterAll, WordSpec}
-import org.scalatest.matchers.MustMatchers
+import org.scalatest.{WordSpecLike, BeforeAndAfterAll, WordSpec}
+import org.scalatest.matchers.{ShouldMatchers, MustMatchers}
 import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration._
 import java.lang.Exception
@@ -29,7 +29,7 @@ class CrasherProcess extends ForkableProcess {
   def waitForExit() { Thread.sleep(200) }
 }
 
-class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpec with MustMatchers with BeforeAndAfterAll with AskSupport {
+class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpecLike with ShouldMatchers with BeforeAndAfterAll with AskSupport {
   implicit val timeout:Timeout = 10 seconds
   def this() = this(ActorSystem("MySpec", AkkaConfigUtils.requireCookie(ConfigFactory.load("subprocess-test"), "Cookie")))
 
@@ -37,13 +37,13 @@ class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with Impli
     "Spawn a simple process" in {
       val fork = new BetterFork[SimpleProcess](_system.dispatcher)
       val resp = Await.result(fork.execute(), 5 seconds)
-      resp.initReturn must equal("hello")
+      resp.initReturn should equal("hello")
     }
 
 
     "Handle remote crashing on initialize" in {
       val fork = new BetterFork[CrasherProcess](_system.dispatcher)
-      evaluating { Await.result(fork.execute(), 5 seconds) } must produce [ExecuteException]
+      evaluating { Await.result(fork.execute(), 5 seconds) } should produce [ExecuteException]
     }
   }
 
@@ -57,7 +57,7 @@ class ProcessForkTests(_system: ActorSystem) extends TestKit(_system) with Impli
         }
       }))
 
-      Await.result((actor ? 1).mapTo[Int], 5 seconds) must equal(2)
+      Await.result((actor ? 1).mapTo[Int], 5 seconds) should equal(2)
       remote.shutdownRemote()
     }
   }

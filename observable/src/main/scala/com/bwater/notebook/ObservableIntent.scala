@@ -11,10 +11,10 @@ import unfiltered.netty.websockets
 import unfiltered.request.{Seg, Path}
 import akka.actor.{ActorSystem, ActorRef, ActorRefFactory}
 import websockets._
-import net.liftweb.json.JsonAST.{JString, JField}
-import net.liftweb.json._
+import org.json4s.JsonAST._
+import org.json4s.native.JsonMethods
 
-class ObservableIntent(system: ActorSystem) {
+class ObservableIntent(system: ActorSystem) extends JsonMethods {
 
   val kernelIdToObsService = collection.mutable.Map[String, ObsWebSocketService]()
 

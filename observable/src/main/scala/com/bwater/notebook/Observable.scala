@@ -26,7 +26,7 @@ class WrappedObservable[T](inner: rx.Observable[T]) extends Observable[T] {
 }
 
 class ConcreteObservable[T] extends Observable[T]  {
-  protected val observableHandler = rx.subjects.Subject.create[T]
+  protected val observableHandler = rx.subjects.PublishSubject.create[T]
 
   def subscribe(observer: Observer[T]) = observableHandler.subscribe(observer)
 }

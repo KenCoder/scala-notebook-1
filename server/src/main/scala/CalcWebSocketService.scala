@@ -4,8 +4,8 @@ package server
 import akka.actor._
 import scala.concurrent.{Future, Promise, Await}
 import com.bwater.notebook.client._
-import net.liftweb.json._
-import JsonDSL._
+import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 import com.bwater.notebook.client.ObjectInfoRequest
 import com.bwater.notebook.client.StreamResponse
 import com.bwater.notebook.client.CompletionRequest

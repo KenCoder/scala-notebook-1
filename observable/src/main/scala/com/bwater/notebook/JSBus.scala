@@ -7,17 +7,15 @@
 
 package com.bwater.notebook
 
-import net.liftweb.json.JsonAST.{JArray, JString, JInt, JValue}
+import org.json4s.JsonAST._
 import org.apache.commons.codec.binary.Hex
 import java.security.SecureRandom
 import collection.mutable
-import rx.subjects.Subject
+import rx.subjects.{PublishSubject, Subject}
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConversions._
 import rx.operators.OperationMap
 import org.slf4j.LoggerFactory
-import net.liftweb.json.DefaultFormats
-import net.liftweb.json.JsonDSL._
 
 private object JSBusState  {
   private val events = mutable.ArrayBuffer.empty[(String, JValue)]
@@ -92,7 +90,7 @@ object JSBus {
       }
     }
 
-    private[this] val subject = Subject.create[JValue]
+    private[this] val subject = PublishSubject.create[JValue]
     val observable:Observable[JValue] = new WrappedObservable[JValue](subject)
 
     val id = newID

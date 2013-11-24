@@ -8,10 +8,9 @@
 package com.bwater.notebook
 
 import akka.testkit.TestKit
-import kernel.remote.{RemoteActorSystem, SingleVM, AkkaConfigUtils}, SingleVM._
-import org.scalatest.WordSpec
-import org.scalatest.matchers.MustMatchers
-import org.scalatest.BeforeAndAfterAll
+import kernel.remote.{RemoteActorSystem,  AkkaConfigUtils}
+import org.scalatest.{WordSpecLike, WordSpec, BeforeAndAfterAll}
+import org.scalatest.matchers.{ShouldMatchers, MustMatchers}
 import akka.testkit.ImplicitSender
 import akka.actor._
 import scala.concurrent.duration._
@@ -21,7 +20,7 @@ import com.typesafe.config.ConfigFactory
 import akka.pattern.ask
 import akka.util.Timeout
 
-class SingleVMSecurityTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpec with MustMatchers with BeforeAndAfterAll {
+class SingleVMSecurityTests(_system: ActorSystem) extends TestKit(_system) with ImplicitSender with WordSpecLike with ShouldMatchers with BeforeAndAfterAll {
 
   import _system.dispatcher
   def this() = this(ActorSystem("MySpec", AkkaConfigUtils.requireCookie(ConfigFactory.load("subprocess-test"), "Cookie")))
