@@ -78,7 +78,11 @@ object ScalaNotebookConfig extends Logging {
       ConfigFactory.empty()
     }
     val sConfig = ScalaNotebookConfig(config.resolve())
-    sConfig.copy(kernelInit = sConfig.kernelInit :+ ScriptFromFile(new File(location, "init.scala")))
+    val initScript = new File(location, "init.scala")
+    if (initScript.exists())
+      sConfig.copy(kernelInit = sConfig.kernelInit :+ ScriptFromFile(initScript))
+    else
+      sConfig
   }
     
 
