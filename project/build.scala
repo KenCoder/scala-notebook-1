@@ -10,6 +10,8 @@ import Keys._
 import org.apache.ivy.core.install.InstallOptions
 import com.untyped.sbtjs.Plugin._
 import scala.Some
+import com.twitter.scrooge._
+import ScroogeSBT._
 
 object NotebookBuild extends Build {
 
@@ -116,7 +118,9 @@ object NotebookBuild extends Build {
       )}
     )
 
-  lazy val server = Project(id = "server", base = file("server"))
+  lazy val server = Project(id = "server", base = file("server"), settings = Project.defaultSettings ++
+    ScroogeSBT.newSettings
+  )
     .dependsOn(common, kernel)
     .projectDefaults
     .withWebAssets
@@ -137,7 +141,11 @@ object NotebookBuild extends Build {
         scalaTest,
         scalate,
         apacheHttpClient,
-        scalaMock
+        scalaMock,
+        thrift,
+        finagleCore,
+        finagleThrift,
+        scroogeRuntime
       )
     )
 
@@ -155,6 +163,12 @@ object NotebookBuild extends Build {
     val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaVersion
     val akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
     val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test"
+
+    private val finagleVer = "6.5.0"
+    val thrift = "org.apache.thrift" % "libthrift" % "0.8.0"
+    val finagleCore = "com.twitter" %% "finagle-core" % finagleVer
+    val finagleThrift = "com.twitter"  %% "finagle-thrift" % finagleVer
+    val scroogeRuntime = "com.twitter" %% "scrooge-runtime" % "3.9.0"
 
     val rxVersion = "0.14.8"
     val rxCore = "com.netflix.rxjava" % "rxjava-core" % rxVersion
